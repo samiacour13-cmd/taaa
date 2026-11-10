@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>التاء المربوطة والمفتوحة</title>
+<style>
+  :root{
+    --bg:#f6f3ee; --card:#fff; --ink:#1e293b; --muted:#64748b; --line:#ece7df;
+    --accent:#0f766e; --m:#b45309; --f:#1d4ed8;
+    --ok:#15803d; --okbg:#ecfdf3; --bad:#b91c1c; --badbg:#fef2f2; --warn:#c2410c; --warnbg:#fff7ed;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Noto Naskh Arabic","Noto Sans Arabic","Segoe UI","Tahoma","Arial",sans-serif;
+    font-size:18px;line-height:1.8}
+  .wrap{max-width:560px;margin:0 auto;padding:16px 16px 48px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;
+    box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:14px;animation:in .25s ease}
+  @keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  h1{font-size:28px;line-height:1.5;margin:6px 0}
+  h2{font-size:21px;margin:0 0 8px}
+  h3{font-size:18px;margin:14px 0 4px}
+  p{margin:6px 0}
+  .muted{color:var(--muted);font-size:15px}
+  .center{text-align:center}
+  .m{color:var(--m);font-weight:700}
+  .f{color:var(--f);font-weight:700}
+  .badge{display:inline-block;background:#e6f4f1;color:var(--accent);border-radius:99px;padding:2px 14px;font-size:14px}
+  .hero{text-align:center;padding:22px 0 10px}
+  input{width:100%;font:inherit;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fcfbf9;outline:none}
+  input:focus{border-color:var(--accent)}
+  .btn{display:block;width:100%;font:inherit;font-weight:700;border:0;border-radius:14px;padding:13px;margin-top:12px;cursor:pointer;transition:transform .08s}
+  .btn:active{transform:scale(.98)}
+  .primary{background:var(--accent);color:#fff}
+  .ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+  .btn:disabled{opacity:.45}
+  .top{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--muted);margin-bottom:6px}
+  .bar{height:8px;background:#e7e2d9;border-radius:99px;overflow:hidden;margin-bottom:14px}
+  .bar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+  .sentence{font-size:24px;line-height:2.1;text-align:center;margin:10px 0 18px}
+  .blank{display:inline-block;min-width:34px;border-bottom:3px dashed var(--muted);text-align:center;color:var(--muted)}
+  .choices{display:flex;gap:12px}
+  .choice{flex:1;font:inherit;font-size:34px;font-weight:700;padding:10px;border-radius:16px;border:2px solid var(--line);background:#fff;cursor:pointer}
+  .choice.cm{color:var(--m)} .choice.cf{color:var(--f)}
+  .choice small{display:block;font-size:13px;font-weight:400;color:var(--muted)}
+  .opt{display:block;width:100%;text-align:right;font:inherit;font-size:17px;padding:12px 14px;margin-top:10px;border-radius:12px;border:1.5px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+  .sel-ok{border-color:var(--ok)!important;background:var(--okbg)!important}
+  .sel-bad{border-color:var(--bad)!important;background:var(--badbg)!important}
+  .fb{border-radius:12px;padding:12px 14px;margin-top:14px;font-size:16px;animation:in .2s ease}
+  .fb.ok{background:var(--okbg);color:var(--ok)}
+  .fb.bad{background:var(--badbg);color:var(--bad)}
+  .fb b{display:block}
+  .fb span{color:var(--ink)}
+  .word-big{font-size:36px;text-align:center;margin:6px 0 4px}
+  .tokens{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0}
+  .tok{font:inherit;font-size:21px;padding:6px 12px;border-radius:10px;border:1.5px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+  .tok.on{border-color:var(--accent);background:#e6f4f1}
+  .tok.t-ok{border-color:var(--ok);background:var(--okbg)}
+  .tok.t-bad{border-color:var(--bad);background:var(--badbg);text-decoration:line-through}
+  .tok.t-miss{border-color:var(--warn);background:var(--warnbg)}
+  .fix{display:block;font-size:14px;color:var(--ok);text-decoration:none}
+  .legend{font-size:13px;color:var(--muted);text-align:center}
+  ul{margin:4px 0;padding-inline-start:22px}
+  li{margin:2px 0}
+  .tip{background:#fffbeb;border:1px dashed #f59e0b;border-radius:12px;padding:10px 14px;font-size:16px}
+  .score-ring{width:150px;height:150px;border-radius:50%;margin:10px auto;display:grid;place-items:center;font-size:34px;font-weight:700}
+  .score-ring span{background:#fff;width:118px;height:118px;border-radius:50%;display:grid;place-items:center}
+  .rows div{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:6px 0;font-size:16px}
+</style>
+</head>
+<body>
+<main class="wrap" id="app"></main>
+
+<script>
+/* ======== المحتوى ======== */
+const POOL1 = [
+  {s:"قرأتُ قصّ_ مفيدةً قبل النوم.", a:"ة", w:"قصّة", why:"اسم مفرد مؤنث، ونقف عليه بالهاء: قصّه."},
+  {s:"جلست الطالبا_ في الصف الأول.", a:"ت", w:"الطالبات", why:"جمع مؤنث سالم، فتاؤه مفتوحة دائمًا."},
+  {s:"سمعتُ صو_ المؤذّن من بعيد.", a:"ت", w:"صوت", why:"التاء أصلية في الاسم، وتُنطق تاءً عند الوقف."},
+  {s:"حفظ التلميذ أبيا_ من الشعر.", a:"ت", w:"أبيات", why:"جمع تكسير مفرده «بيت» ينتهي بتاء مفتوحة."},
+  {s:"اجتمع القضا_ في المحكمة.", a:"ة", w:"القضاة", why:"جمع تكسير مفرده «قاضٍ» لا ينتهي بتاء، ونقف عليه بالهاء."},
+  {s:"الصلا_ عماد الدين.", a:"ة", w:"الصلاة", why:"اسم مفرد مؤنث، ونقف عليه بالهاء: الصلاه."},
+  {s:"ينمو النبا_ في التربة الخصبة.", a:"ت", w:"النبات", why:"التاء أصلية من الفعل «نبت»، وتبقى تاءً عند الوقف."},
+  {s:"اشترى أبي زي_ الزيتون.", a:"ت", w:"زيت", why:"اسم ثلاثي ساكن الوسط، وتاؤه أصلية."},
+  {s:"سك_َ المعلّم قليلًا ثم تابع الدرس.", a:"ت", w:"سكتَ", why:"التاء في آخر الفعل مفتوحة دائمًا، وهنا هي أصلية."},
+  {s:"كتب_ْ مريمُ الدرس بخط جميل.", a:"ت", w:"كتبتْ", why:"تاء التأنيث الساكنة تلحق الفعل، والفعل لا تكون فيه تاء مربوطة أبدًا."},
+  {s:"كان ابن بطوطة رحّال_ً شهيرًا.", a:"ة", w:"رحّالة", why:"صيغة مبالغة تنتهي بتاء مربوطة."},
+  {s:"استُشهد حمز_ُ بن عبد المطلب في أُحُد.", a:"ة", w:"حمزة", why:"علم مذكر ينتهي بتاء مربوطة، ونقف عليه بالهاء."},
+  {s:"هذه بن_ جارنا.", a:"ت", w:"بنت", why:"اسم ثلاثي ساكن الوسط، فتاؤه مفتوحة."},
+  {s:"يا لي_ الشباب يعود يومًا.", a:"ت", w:"ليت", why:"«ليت» حرف، والتاء في آخر الحروف مفتوحة."},
+  {s:"سافر الطلب_ في رحلة علمية.", a:"ة", w:"الطلبة", why:"جمع تكسير مفرده «طالب» لا ينتهي بتاء."},
+  {s:"يمو_ُ الزرع إذا انقطع الماء.", a:"ت", w:"يموت", why:"فعل مضارع تاؤه أصلية، والتاء في الأفعال مفتوحة."},
+  {s:"التف_َ الطفل إلى أمّه.", a:"ت", w:"التفتَ", why:"التاء في آخر الفعل مفتوحة دائمًا."},
+  {s:"نجحت الفتا_ في الامتحان.", a:"ة", w:"الفتاة", why:"اسم مفرد مؤنث، ونقف عليه بالهاء: الفتاه."},
+  /* أسئلة مضافة (مستوى طلبة المدرسة العليا للأساتذة) */
+  {s:"حدّد النبيّ ﷺ مواقي_ الإحرام للحجّاج.", a:"ت", w:"مواقيت", why:"جمع تكسير مفرده «ميقات» ينتهي بتاء مفتوحة، فتبقى التاء مفتوحة في الجمع."},
+  {s:"طال سكو_ُ الحاضرين قبل أن يتكلّم الخطيب.", a:"ت", w:"سكوت", why:"التاء أصلية من الجذر (س ك ت)، ونقف عليها تاءً."},
+  {s:"نُقل رُفا_ُ الشهداء إلى مقبرة القرية.", a:"ت", w:"رُفات", why:"التاء أصلية من الجذر (ر ف ت)، وليست علامة تأنيث."},
+  {s:"يُخرج المسلم زكا_َ ماله كلّ عام.", a:"ة", w:"زكاة", why:"اسم مفرد مؤنث يُوقف عليه بالهاء: زكاه."},
+  {s:"تُبثّ المحاضرة على القنا_ الجامعية.", a:"ة", w:"القناة", why:"اسم مفرد مؤنث يُوقف عليه بالهاء، والألف قبلها لا تجعلها مفتوحة."},
+  {s:"شارك الدُّعا_ في الملتقى الوطني.", a:"ة", w:"الدُّعاة", why:"جمع تكسير مفرده «داعٍ» لا ينتهي بتاء، فتُكتب مربوطة."},
+  {s:"دُفن الأموا_ في مقبرة واحدة.", a:"ت", w:"الأموات", why:"جمع تكسير مفرده «ميْت» ينتهي بتاء مفتوحة."},
+  {s:"هيها_ أن يعود ما مضى من العمر.", a:"ت", w:"هيهات", why:"اسم فعل ماضٍ بمعنى «بَعُد»، وتاؤه مفتوحة."},
+  {s:"﴿ولا_َ حينَ مناصٍ﴾", a:"ت", w:"لاتَ", why:"«لات» حرف نفي، والتاء في آخر الحروف مفتوحة."},
+  {s:"ربّ_َ كلمةٍ قالت لصاحبها: دعني.", a:"ت", w:"ربّتَ", why:"تاء التأنيث اللاحقة بالحرف «ربّ» تُكتب مفتوحة."},
+  {s:"خرجت الفتيا_ إلى الملعب.", a:"ت", w:"الفتيات", why:"جمع مؤنث سالم، وإن كان مفرده «فتاة» بتاء مربوطة."},
+  {s:"كان معاوي_ُ بن أبي سفيان أوّل خلفاء بني أمية.", a:"ة", w:"معاوية", why:"علم مذكر ينتهي بتاء مربوطة."},
+  {s:"عُرف الجاحظ بأنه فهّام_ٌ واسع الاطّلاع.", a:"ة", w:"فهّامة", why:"صيغة مبالغة تنتهي بتاء مربوطة لتأكيد المبالغة لا للتأنيث."},
+  {s:"قال الطالب: قرأ_ُ المقرَّر كاملًا.", a:"ت", w:"قرأتُ", why:"تاء الفاعل المتحركة، وهي مفتوحة دائمًا."},
+  {s:"يجري نهر الفرا_ في بلاد الرافدين.", a:"ت", w:"الفرات", why:"التاء أصلية في الاسم (من الماء الفُرات أي العذب)، ونقف عليها تاءً."},
+  {s:"نظرتُ في المرآ_ قبل الخروج.", a:"ة", w:"المرآة", why:"اسم مفرد مؤنث يُوقف عليه بالهاء: المرآه."},
+  {s:"استغرق التكوين خمس سنوا_.", a:"ت", w:"سنوات", why:"جمع مؤنث سالم مفرده «سنة»."},
+  {s:"اجتهد_ْ الطالبةُ فنالت المرتبة الأولى.", a:"ت", w:"اجتهدتْ", why:"تاء التأنيث الساكنة تلحق الفعل الماضي، وهي مفتوحة دائمًا."}
+];
+
+const R = {
+  R1:"اسم مفرد مؤنث يُوقف عليه بالهاء",
+  R3:"جمع تكسير مفرده لا ينتهي بتاء",
+  R10:"علم مذكر ينتهي بتاء مربوطة",
+  R11:"صيغة مبالغة",
+  R2:"جمع مؤنث سالم",
+  R4:"جمع تكسير مفرده ينتهي بتاء مفتوحة",
+  R5:"تاء أصلية في آخر الاسم المفرد",
+  R6:"اسم ثلاثي ساكن الوسط",
+  R7:"تاء التأنيث الساكنة في الفعل",
+  R8:"تاء الفاعل المتحركة",
+  R9:"تاء أصلية في آخر الفعل",
+  R12:"تاء في آخر الحرف"
+};
+const TYPE_M = ["R1","R3","R10","R11"];
+const TYPE_F = ["R2","R4","R5","R6","R7","R8","R9","R12"];
+// أسباب متداخلة لا تُعرض معًا حتى لا يكون للسؤال جوابان
+const CONFLICT = {R4:["R5"], R5:["R4","R6"], R6:["R5"]};
+
+const POOL2 = [
+  {w:"المجتهدات", r:"R2"}, {w:"أصوات", r:"R4"}, {w:"أبيات", r:"R4"},
+  {w:"نبات", r:"R5"}, {w:"عنكبوت", r:"R5"}, {w:"بنت", r:"R6"}, {w:"أخت", r:"R6"},
+  {w:"نجحتْ", r:"R7"}, {w:"درستُ", r:"R8"}, {w:"سكتَ", r:"R9"}, {w:"يموتُ", r:"R9"},
+  {w:"شجرة", r:"R1"}, {w:"مدرسة", r:"R1"}, {w:"طلبة", r:"R3"}, {w:"قضاة", r:"R3"},
+  {w:"أسامة", r:"R10"}, {w:"حمزة", r:"R10"}, {w:"علّامة", r:"R11"}, {w:"رحّالة", r:"R11"},
+  /* كلمات مضافة */
+  {w:"الفتيات", r:"R2"}, {w:"سنوات", r:"R2"}, {w:"الأموات", r:"R4"}, {w:"مواقيت", r:"R4"},
+  {w:"رُفات", r:"R5"}, {w:"سكوت", r:"R5"}, {w:"ميقات", r:"R5"}, {w:"وقت", r:"R6"}, {w:"حوت", r:"R6"},
+  {w:"اجتهدتْ", r:"R7"}, {w:"فهمتُ", r:"R8"}, {w:"قلتَ", r:"R8"}, {w:"باتَ", r:"R9"}, {w:"يصمتُ", r:"R9"},
+  {w:"زكاة", r:"R1"}, {w:"مشكاة", r:"R1"}, {w:"قناة", r:"R1"}, {w:"دُعاة", r:"R3"}, {w:"رُماة", r:"R3"}, {w:"سُعاة", r:"R3"},
+  {w:"معاوية", r:"R10"}, {w:"طلحة", r:"R10"}, {w:"فهّامة", r:"R11"}, {w:"نسّابة", r:"R11"},
+  {w:"ليت", r:"R12"}, {w:"لاتَ", r:"R12"}, {w:"ثمّتَ", r:"R12"}
+];
+
+// الكلمة الخاطئة تُكتب هكذا: "الخطأ|الصواب"
+const POOL3 = [
+  ["زارت","فاطمت|فاطمة","المكتبة","وقرأة|وقرأت","أبياتًا","من","الشعر"],
+  ["سمع","القضات|القضاة","صوة|صوت","الشاهد","في","الجلسة"],
+  ["جلست","البنة|البنت","مع","المعلمات","في","الحديقة"],
+  ["الحياة","جميلة","والنباة|والنبات","أخضر","في","الربيع"],
+  ["التفتة|التفتت","الطالبة","إلى","زميلاتها","فابتسمت"],
+  ["سافر","الطلبت|الطلبة","في","رحلة","إلى","الجبال"],
+  /* جمل مضافة */
+  ["يُخرج","المسلمون","الزكات|الزكاة","في","أوقاة|أوقات","محدّدة"],
+  ["التقى","الدعات|الدعاة","بالفتيات","في","قاعت|قاعة","المحاضرات"],
+  ["هيهاة|هيهات","أن","يُنسى","رفاة|رفات","الشهداء"],
+  ["شاهدة|شاهدت","الطالبة","حوتًا","ضخمًا","على","شاشة","القناة"],
+  ["قال","معاويت|معاوية","للرماة","اثبتوا","في","مواقعكم"],
+  ["طال","سكوة|سكوت","الأستاذة","ثم","ابتسمت"],
+  ["نظرت","الفتات|الفتاة","في","المرآت|المرآة","قبل","مواقيت","الدرس"]
+];
+
+const N1 = 22, N2 = 20, N3 = 8, TOTAL = N1 + N2 + N3;
+
+/* ======== الحالة ======== */
+const app = document.getElementById("app");
+let S;
+function reset(){
+  S = {name:"", stage:0, i:0, score:[0,0,0],
+       q1:shuffle(POOL1).slice(0,N1),
+       q2:shuffle(POOL2).slice(0,N2).map(buildQ2),
+       q3:shuffle(POOL3).slice(0,N3)};
+}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+// يحافظ على اتصال الحروف عند تلوين التاء وحدها
+const NOJOIN="اأإآٱدذرزوؤءة", HARAKAT=/[\u064B-\u0652\u0670]/;
+function joins(before){
+  for(let k=before.length-1;k>=0;k--){ if(HARAKAT.test(before[k])) continue; const c=before[k]; return /[\u0620-\u064A]/.test(c) && !NOJOIN.includes(c); }
+  return false;
+}
+function colorTaa(before,letter){
+  const z = joins(before) ? "\u200D" : "";
+  return z+'<span class="'+(letter==="ة"?"m":"f")+'">'+z+letter+'</span>';
+}
+function hl(w){
+  const i=Math.max(w.lastIndexOf("ة"),w.lastIndexOf("ت"));
+  if(i<0) return w;
+  return w.slice(0,i)+colorTaa(w.slice(0,i),w[i])+w.slice(i+1);
+}
+function buildQ2(it){
+  const same = TYPE_M.includes(it.r) ? TYPE_M : TYPE_F;
+  const other = same===TYPE_M ? TYPE_F : TYPE_M;
+  const bad = [it.r, ...(CONFLICT[it.r]||[])];
+  const d = shuffle(same.filter(k=>!bad.includes(k))).slice(0,2)
+    .concat(shuffle(other.filter(k=>!bad.includes(k))).slice(0,1));
+  return {...it, opts:shuffle([it.r,...d])};
+}
+function done(){ return S.stage===1?S.i:S.stage===2?N1+S.i:S.stage===3?N1+N2+S.i:0 }
+function header(title){
+  const total = S.stage===1?N1:S.stage===2?N2:N3;
+  return '<div class="top"><span>المرحلة '+S.stage+' من 3</span><span>'+(S.i+1)+' / '+total+'</span></div>'+
+    '<div class="bar"><i style="width:'+(done()/TOTAL*100)+'%"></i></div>'+
+    '<h2>'+title+'</h2>';
+}
+function nextBtn(fn){ return '<button class="btn primary" id="next">التالي</button>' }
+
+/* ======== الشاشات ======== */
+function home(){
+  app.innerHTML =
+  '<div class="hero"><span class="badge">نشاط تفاعلي</span>'+
+  '<h1>التاء <span class="m">المربوطة</span><br>والتاء <span class="f">المفتوحة</span></h1>'+
+  '<p class="muted">في الأسماء والأفعال والحروف</p>'+
+  '<p class="muted">موجّه لطلبة المدرسة العليا للأساتذة</p></div>'+
+  '<div class="card"><label>اسمك ولقبك</label><input id="nm" placeholder="مثال: سارة بن علي" value="'+(S.name||"")+'">'+
+  '<button class="btn primary" id="go">ابدأ النشاط</button>'+
+  '<button class="btn ghost" id="rules">مراجعة القاعدة أولًا</button></div>'+
+  '<p class="muted center">3 مراحل · '+TOTAL+' سؤالًا</p>';
+  const nm = document.getElementById("nm");
+  document.getElementById("go").onclick = ()=>{
+    if(!nm.value.trim()){ nm.focus(); nm.style.borderColor="var(--bad)"; return; }
+    S.name = nm.value.trim(); S.stage=1; S.i=0; stage1();
+  };
+  document.getElementById("rules").onclick = ()=>{ S.name = nm.value.trim(); rules(); };
+}
+
+function rules(){
+  app.innerHTML =
+  '<div class="card"><h2>التاء <span class="m">المربوطة (ة)</span></h2>'+
+  '<p>لا تأتي إلا في آخر <b>الأسماء</b>، وتُنطق <b>هاءً</b> عند الوقف وتاءً عند الوصل.</p>'+
+  '<ul><li>الاسم المفرد المؤنث: شجرة، فتاة، صلاة</li>'+
+  '<li>بعض أعلام المذكر: حمزة، أسامة، معاوية</li>'+
+  '<li>جمع التكسير الذي لا ينتهي مفرده بتاء: طلبة، قضاة، هداة</li>'+
+  '<li>صيغ المبالغة: علّامة، رحّالة</li></ul></div>'+
+  '<div class="card"><h2>التاء <span class="f">المفتوحة (ت)</span></h2>'+
+  '<p>تُنطق <b>تاءً</b> في الوصل والوقف.</p>'+
+  '<h3>في الأسماء</h3><ul><li>جمع المؤنث السالم: معلّمات</li>'+
+  '<li>الاسم المفرد ذو التاء الأصلية: نبات، عنكبوت، صوت</li>'+
+  '<li>الاسم الثلاثي الساكن الوسط: بنت، أخت، زيت</li>'+
+  '<li>جمع التكسير الذي مفرده بتاء مفتوحة: أبيات (بيت)، أصوات (صوت)</li></ul>'+
+  '<h3>في الأفعال (دائمًا مفتوحة)</h3><ul><li>تاء أصلية: سكتَ، نبتَ، يموتُ</li>'+
+  '<li>تاء التأنيث الساكنة: كتبتْ</li><li>تاء الفاعل: كتبتُ، كتبتَ، كتبتِ</li></ul>'+
+  '<h3>في الحروف وأسماء الأفعال</h3><ul><li>الحروف: ليت، لات، ربّت، ثمّت</li><li>اسم الفعل: هيهات</li></ul></div>'+
+  '<div class="tip"><b>اختبار الوقف:</b> قف على الكلمة؛ إن نطقتها هاءً فهي مربوطة، وإن بقيت تاءً فهي مفتوحة.</div>'+
+  '<button class="btn primary" id="back">رجوع</button>';
+  document.getElementById("back").onclick = home;
+  scrollTo(0,0);
+}
+
+/* المرحلة 1: أكمل */
+function stage1(){
+  const q = S.q1[S.i];
+  app.innerHTML = '<div class="card">'+header("أكمل الكلمة بالتاء المناسبة")+
+    '<div class="sentence">'+q.s.replace("_",'<span class="blank" id="bl">؟</span>')+'</div>'+
+    '<div class="choices"><button class="choice cm" data-c="ة">ة<small>مربوطة</small></button>'+
+    '<button class="choice cf" data-c="ت">ت<small>مفتوحة</small></button></div>'+
+    '<div id="fbx"></div></div>';
+  app.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{
+    const ok = b.dataset.c===q.a;
+    if(ok) S.score[0]++;
+    app.querySelectorAll(".choice").forEach(x=>{x.disabled=true; if(x.dataset.c===q.a) x.classList.add("sel-ok")});
+    if(!ok) b.classList.add("sel-bad");
+    const bl=document.getElementById("bl"), pre=q.s.split("_")[0];
+    bl.outerHTML=colorTaa(pre,q.a);
+    document.getElementById("fbx").innerHTML='<div class="fb '+(ok?"ok":"bad")+'"><b>'+(ok?"أحسنت!":"ليس تمامًا، الصواب: "+q.w)+'</b><span>'+q.why+'</span></div>'+nextBtn();
+    document.getElementById("next").onclick=()=>{ S.i++; if(S.i<N1) stage1(); else {S.stage=2;S.i=0;stage2();} };
+  });
+  scrollTo(0,0);
+}
+
+/* المرحلة 2: علّل */
+function stage2(){
+  const q = S.q2[S.i];
+  const isM = TYPE_M.includes(q.r);
+  app.innerHTML = '<div class="card">'+header("علّل كتابة التاء")+
+    '<div class="word-big">'+hl(q.w)+'</div>'+
+    '<p class="center">لماذا كُتبت التاء <span class="'+(isM?"m":"f")+'">'+(isM?"مربوطة":"مفتوحة")+'</span>؟</p>'+
+    q.opts.map(k=>'<button class="opt" data-k="'+k+'">'+R[k]+'</button>').join("")+
+    '<div id="fbx"></div></div>';
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    const ok=b.dataset.k===q.r;
+    if(ok) S.score[1]++;
+    app.querySelectorAll(".opt").forEach(x=>{x.disabled=true; if(x.dataset.k===q.r) x.classList.add("sel-ok")});
+    if(!ok) b.classList.add("sel-bad");
+    document.getElementById("fbx").innerHTML='<div class="fb '+(ok?"ok":"bad")+'"><b>'+(ok?"إجابة صحيحة":"الإجابة الصحيحة")+'</b><span>'+R[q.r]+'.</span></div>'+nextBtn();
+    document.getElementById("next").onclick=()=>{ S.i++; if(S.i<N2) stage2(); else {S.stage=3;S.i=0;stage3();} };
+  });
+  scrollTo(0,0);
+}
+
+/* المرحلة 3: اكتشف الخطأ */
+function stage3(){
+  const toks = S.q3[S.i].map(t=>{const [w,fix]=t.split("|");return {w,fix}});
+  const sel = new Set();
+  app.innerHTML = '<div class="card">'+header("اكتشف الأخطاء")+
+    '<p class="muted">المس كل كلمة كُتبت تاؤها خطأً، ثم اضغط «تحقّق».</p>'+
+    '<div class="tokens">'+toks.map((t,i)=>'<button class="tok" data-i="'+i+'">'+t.w+'</button>').join("")+'</div>'+
+    '<button class="btn primary" id="chk">تحقّق</button><div id="fbx"></div></div>';
+  const btns = app.querySelectorAll(".tok");
+  btns.forEach(b=>b.onclick=()=>{ const i=+b.dataset.i; sel.has(i)?sel.delete(i):sel.add(i); b.classList.toggle("on"); });
+  document.getElementById("chk").onclick=()=>{
+    let perfect=true;
+    btns.forEach(b=>{
+      const i=+b.dataset.i, t=toks[i], picked=sel.has(i);
+      b.disabled=true; b.classList.remove("on");
+      if(t.fix && picked){ b.classList.add("t-ok"); b.innerHTML=t.w+'<span class="fix">'+hl(t.fix)+'</span>'; }
+      else if(t.fix && !picked){ perfect=false; b.classList.add("t-miss"); b.innerHTML=t.w+'<span class="fix">'+hl(t.fix)+'</span>'; }
+      else if(!t.fix && picked){ perfect=false; b.classList.add("t-bad"); }
+    });
+    if(perfect) S.score[2]++;
+    document.getElementById("chk").remove();
+    document.getElementById("fbx").innerHTML=
+      '<p class="legend">أخضر: أصبت · برتقالي: خطأ فاتك · أحمر: الكلمة صحيحة أصلًا</p>'+
+      '<div class="fb '+(perfect?"ok":"bad")+'"><b>'+(perfect?"ممتاز! اكتشفت كل الأخطاء.":"راجع التصويبات أعلاه.")+'</b></div>'+nextBtn();
+    document.getElementById("next").onclick=()=>{ S.i++; if(S.i<N3) stage3(); else result(); };
+  };
+  scrollTo(0,0);
+}
+
+/* النتيجة */
+function result(){
+  const tot=S.score[0]+S.score[1]+S.score[2], pct=Math.round(tot/TOTAL*100);
+  const msg = pct>=90?"ممتاز! تمكّنت من القاعدة.":pct>=70?"جيد جدًا، راجع الحالات التي أخطأت فيها.":pct>=50?"مقبول، أعد مراجعة القاعدة ثم حاول مجددًا.":"تحتاج إلى مراجعة القاعدة وإعادة المحاولة.";
+  const d=new Date();
+  app.innerHTML='<div class="card center"><span class="badge">النتيجة النهائية</span>'+
+    '<h2 style="margin-top:10px">'+S.name+'</h2>'+
+    '<div class="score-ring" style="background:conic-gradient(var(--accent) '+pct+'%,#e7e2d9 0)"><span>'+tot+'/'+TOTAL+'</span></div>'+
+    '<p><b>'+pct+'%</b> · '+msg+'</p>'+
+    '<div class="rows" style="text-align:right;margin-top:12px">'+
+    '<div><span>أكمل بالتاء المناسبة</span><b>'+S.score[0]+' / '+N1+'</b></div>'+
+    '<div><span>علّل كتابة التاء</span><b>'+S.score[1]+' / '+N2+'</b></div>'+
+    '<div><span>اكتشف الأخطاء</span><b>'+S.score[2]+' / '+N3+'</b></div>'+
+    '<div><span>التاريخ</span><span>'+d.toLocaleDateString("ar-DZ")+' · '+d.toLocaleTimeString("ar-DZ",{hour:"2-digit",minute:"2-digit"})+'</span></div></div>'+
+    '<div class="tip" style="margin-top:14px;text-align:right">📸 التقط صورة لهذه الشاشة وأرسلها إلى الأستاذ.</div>'+
+    '<button class="btn ghost" id="again">إعادة المحاولة (أسئلة جديدة)</button></div>';
+  document.getElementById("again").onclick=()=>{ const n=S.name; reset(); S.name=n; home(); };
+  scrollTo(0,0);
+}
+
+reset(); home();
+</script>
+</body>
+</html>
